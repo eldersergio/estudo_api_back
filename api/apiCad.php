@@ -12,15 +12,25 @@ switch ($metodo) {
         $data = json_decode(file_get_contents("php://input"));
         $cadastro->create($data->usuario, $data->senha);
         break;
-    
-    case 'GET':    
+
+    case 'GET':
         if (isset($_GET['id_usuario'])) {
             $cadastro->read($_GET['id_usuario']);
         } else {
             $cadastro->read($_GET);
         }
         break;
+
+    case 'PUT':
+        $data = json_decode(file_get_contents("php://input"));
+        $cadastro->update($data->id_usuario, $data->usuario, $data->senha);
+        break;
+
+    case 'DELETE':
+        $data = json_decode(file_get_contents("php://input"));
+        $cadastro->delete($data->id_usuario);
+        break;
     default:
-        # code...
+        echo json_encode(["message" => "Método não permitido"]);
         break;
 }

@@ -24,7 +24,8 @@ class Usuario
     }
 
     // Cadastro de usuario
-    public function create($usuario, $senha) {
+    public function create($usuario, $senha)
+    {
         $sql = "INSERT INTO usuario (usuario, senha) 
                         VALUES 
                 (:usuario, :senha)";
@@ -39,24 +40,54 @@ class Usuario
         }
     }
 
-    public function read($idUsuario) {
-      
-      if ($idUsuario) {
-      $sql = "SELECT 
+    // Buscar de usuarios
+    public function read($idUsuario)
+    {
+
+        if ($idUsuario) {
+            $sql = "SELECT 
                 * 
                FROM usuario  
                WHERE id_usuario = :id_usuario";
-      $stmt = $this->conn->prepare($sql);
-      $stmt->bindParam(":id_usuario", $idUsuario);
-      $stmt->execute();
-      $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    } else {
-        $sql = "SELECT * FROM usuario";
-        $stmt = $this->conn->query($sql);
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-    echo json_encode($result);
-      
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(":id_usuario", $idUsuario);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        } else {
+            $sql = "SELECT * FROM usuario";
+            $stmt = $this->conn->query($sql);
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+        echo json_encode($result);
     }
 
+    // Atualização do usuario
+    public function update($idUsuario, $usuario, $senha)
+    {
+        $sql = "UPDATE usuario SET usuario = :usuario, senha = :senha WHERE id_usuario = :id_usuario";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(":usuario", $usuario);
+        $stmt->bindParam(":senha", $senha);
+        $stmt->bindParam(":id_usuario", $idUsuario);
+
+        if ($stmt->execute()) {
+            echo json_encode(["message" => "Usuário atualizado com sucesso!"]);
+        } else {
+            echo json_encode(["message" => "Falha ao atualizar usuário."]);
+        }
+    }
+
+    // Deletar usuario
+    public function delete($idUsuario)
+    {
+        $sql = "DELETE FROM usuario WHERE id_usuario = :id_usuario";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id_usuario', $idUsuario);
+
+        if ($stmt->execute()) {
+            echo json_encode(["message" => "Usuário deletado com sucesso!"]);
+        } else {
+            echo json_encode(["message" => "Falha ao deletar usuário."]);
+        }
+    }
 }
